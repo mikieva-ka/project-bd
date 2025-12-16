@@ -1,0 +1,74 @@
+CREATE TABLE Theatrs (
+    theatr_id INT PRIMARY KEY,
+    theatr_name VARCHAR(150) NOT NULL,
+    address VARCHAR(100) NOT NULL
+);
+
+CREATE Table zals (
+    zal_id int PRIMARY KEY,
+    zal_name VARCHAR(50) not null,
+    vmestitelnost INT NOT NULL,
+    theatr_id INT NOT NULL,
+    Foreign Key (theatr_id) REFERENCES Theatrs(theatr_id)
+);
+
+CREATE TABLE spectakls (
+    spectakl_id INT PRIMARY KEY,
+    spectakl_name VARCHAR(100) NOT NULL,
+    prodolzhitelnost INT NOT NULL,
+    zal_id int NOT NULL,
+    Foreign Key (zal_id) REFERENCES zals(zal_id)
+);
+
+CREATE TABLE zhanrs (
+    zhanr_id int PRIMARY KEY,
+    zhanr VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE spectakls_zhanrs (
+    spectakl_id int,
+    zhanr_id int,
+    PRIMARY KEY (spectakl_id, zhanr_id),
+    Foreign Key (spectakl_id) REFERENCES spectakls(spectakl_id),
+    Foreign Key (zhanr_id) REFERENCES zhanrs(zhanr_id)
+);
+
+CREATE TABLE seanses (
+    seans_id int PRIMARY KEY,
+    data DATE NOT NULL,
+    time TIME NOT NULL,
+    spectakl_id int NOT NULL,
+    Foreign Key (spectakl_id) REFERENCES spectakls(spectakl_id)
+);
+
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    u_fullname VARCHAR(255) NOT NULL,
+    email VARCHAR(100) not null
+);
+
+CREATE TABLE bilets (
+    bilet_id int PRIMARY KEY,
+    price int not null,
+    ryad int not null,
+    mesto int not null,
+    seans_id int NOT NULL,
+    user_id int NOT NULL,
+    Foreign Key (seans_id) REFERENCES seanses(seans_id),
+    Foreign Key (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE actors (
+    actor_id int PRIMARY KEY,
+    actor_name VARCHAR(255) not null
+);
+
+CREATE TABLE roles (
+    role_id int PRIMARY KEY,
+    role VARCHAR(100) NOT NULL,
+    glavnaya_role BOOLEAN,
+    spectakl_id int NOT NULL,
+    actor_id int NOT NULL,
+    Foreign Key (spectakl_id) REFERENCES spectakls(spectakl_id),
+    Foreign Key (actor_id) REFERENCES actors(actor_id)
+);
