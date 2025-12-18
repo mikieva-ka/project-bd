@@ -1,0 +1,201 @@
+CREATE TABLE Theatrs (
+    theatr_id INT PRIMARY KEY,
+    theatr_name VARCHAR(150) NOT NULL,
+    address VARCHAR(100) NOT NULL
+);
+
+CREATE Table zals (
+    zal_id int PRIMARY KEY,
+    zal_name VARCHAR(50) not null,
+    vmestitelnost INT NOT NULL,
+    theatr_id INT NOT NULL,
+    Foreign Key (theatr_id) REFERENCES Theatrs(theatr_id)
+);
+
+CREATE TABLE spectakls (
+    spectakl_id INT PRIMARY KEY,
+    spectakl_name VARCHAR(100) NOT NULL,
+    prodolzhitelnost INT NOT NULL,
+    zal_id int NOT NULL,
+    Foreign Key (zal_id) REFERENCES zals(zal_id)
+);
+
+CREATE TABLE zhanrs (
+    zhanr_id int PRIMARY KEY,
+    zhanr VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE spectakls_zhanrs (
+    spectakl_id int,
+    zhanr_id int,
+    PRIMARY KEY (spectakl_id, zhanr_id),
+    Foreign Key (spectakl_id) REFERENCES spectakls(spectakl_id),
+    Foreign Key (zhanr_id) REFERENCES zhanrs(zhanr_id)
+);
+
+CREATE TABLE seanses (
+    seans_id int PRIMARY KEY,
+    data DATE NOT NULL,
+    time TIME NOT NULL,
+    spectakl_id int NOT NULL,
+    Foreign Key (spectakl_id) REFERENCES spectakls(spectakl_id)
+);
+
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    u_fullname VARCHAR(255) NOT NULL,
+    email VARCHAR(100) not null
+);
+
+CREATE TABLE bilets (
+    bilet_id int PRIMARY KEY,
+    price int not null,
+    ryad int not null,
+    mesto int not null,
+    seans_id int NOT NULL,
+    user_id int NOT NULL,
+    Foreign Key (seans_id) REFERENCES seanses(seans_id),
+    Foreign Key (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE actors (
+    actor_id int PRIMARY KEY,
+    actor_name VARCHAR(255) not null
+);
+
+CREATE TABLE roles (
+    role_id int PRIMARY KEY,
+    role VARCHAR(100) NOT NULL,
+    glavnaya_role BOOLEAN,
+    spectakl_id int NOT NULL,
+    actor_id int NOT NULL,
+    Foreign Key (spectakl_id) REFERENCES spectakls(spectakl_id),
+    Foreign Key (actor_id) REFERENCES actors(actor_id)
+);
+
+INSERT INTO Theatrs (theatr_id, theatr_name, address) VALUES (1, 'Большой театр', 'ул. Театральная площадь 1, Москва');
+
+INSERT INTO zals (zal_id, zal_name, vmestitelnost, theatr_id) VALUES
+(1, 'Большой зал', 1500, 1),
+(2, 'Малый зал', 400, 1),
+(3, 'Основной зал', 800, 1),
+(4, 'Экспериментальный зал', 200, 1),
+(5, 'Главная сцена', 600, 1);
+
+INSERT INTO spectakls (spectakl_id, spectakl_name, prodolzhitelnost, zal_id) VALUES
+(1, 'Щелкунчик', 120, 1),
+(2, 'Вишнёвый сад', 150, 3),
+(3, 'Гамлет', 180, 5),
+(4, 'Маскарад', 130, 2),
+(5, 'Дядя Ваня', 140, 3);
+
+INSERT INTO zhanrs (zhanr_id, zhanr) VALUES
+(1, 'Драма'),
+(2, 'Комедия'),
+(3, 'Балет'),
+(4, 'Трагедия'),
+(5, 'Мелодрама');
+
+INSERT INTO spectakls_zhanrs (spectakl_id, zhanr_id) VALUES
+(1, 3),        -- Щелкунчик – балет
+(2, 1),        -- Вишнёвый сад – драма
+(3, 4),        -- Гамлет – трагедия
+(4, 2),        -- Маскарад – комедия
+(5, 1);        -- Дядя Ваня – драма
+
+INSERT INTO seanses (seans_id, data, time, spectakl_id) VALUES
+(1, '2025-12-20', '19:00:00', 1),
+(2, '2025-12-21', '18:00:00', 2),
+(3, '2025-12-22', '20:00:00', 3),
+(4, '2025-12-23', '19:30:00', 4),
+(5, '2025-12-24', '18:30:00', 5);
+
+INSERT INTO users (user_id, u_fullname, email) VALUES
+(1, 'Гордеев Илья Максимович', 'gordeev.im@example.com'),
+(2, 'Макарова Анастасия Романовна', 'makarova.ar@example.com'),
+(3, 'Зайцев Даниил Игоревич', 'zaitsev.di@example.com'),
+(4, 'Фролова Вероника Олеговна', 'frolova.vo@example.com'),
+(5, 'Калинин Артём Семёнович', 'kalinin.as@example.com'),
+(6, 'Мартынова Екатерина Андреевна', 'martynova.ea@example.com'),
+(7, 'Савельев Михаил Юрьевич', 'saveliev.my@example.com'),
+(8, 'Осипова Дарья Павловна', 'osipova.dp@example.com'),
+(9, 'Медведев Станислав Викторович', 'medvedev.sv@example.com'),
+(10, 'Селезнёва Маргарита Дмитриевна', 'selezneva.md@example.com');
+
+INSERT INTO bilets (bilet_id, price, ryad, mesto, seans_id, user_id) VALUES
+(1, 2500, 10, 15, 1, 1), -- Сеанс 1: Щелкунчик
+(2, 2600, 8, 20, 1, 2),
+(3, 2400, 12, 5, 1, 3),
+(4, 1800, 5, 10, 2, 4), -- Сеанс 2: Вишнёвый сад
+(5, 1850, 7, 22, 2, 5),
+(6, 1750, 3, 15, 2, 6),
+(7, 3000, 3, 1, 3, 7), -- Сеанс 3: Гамлет
+(8, 3100, 2, 10, 3, 8),
+(9, 2950, 6, 18, 3, 9),
+(10, 2000, 7, 8, 4, 10), -- Сеанс 4: Маскарад
+(11, 2100, 9, 12, 4, 1),
+(12, 1950, 4, 25, 4, 2),
+(13, 1500, 12, 30, 5, 3), -- Сеанс 5: Дядя Ваня
+(14, 1550, 10, 14, 5, 4),
+(15, 1600, 14, 5, 5, 5);
+
+INSERT INTO actors (actor_id, actor_name) VALUES
+(1, 'Олег Меньшиков'),
+(2, 'Чулпан Хаматова'),
+(3, 'Константин Хабенский'),
+(4, 'Ингеборга Дапкунайте'),
+(5, 'Евгений Миронов'),
+(6, 'Сергей Безруков'),
+(7, 'Алиса Фрейндлих'),
+(8, 'Юлия Пересильд'),
+(9, 'Александр Лазарев мл.'),
+(10, 'Нонна Гришаева'),
+(11, 'Владимир Машков'),
+(12, 'Елена Яковлева'),
+(13, 'Павел Деревянко'),
+(14, 'Ирина Купченко'),
+(15, 'Михаил Ульянов');
+
+
+-- Щелкунчик (spectakl_id = 1) — балет
+INSERT INTO roles (role_id, role, glavnaya_role, spectakl_id, actor_id) VALUES
+(1, 'Мышиный король', TRUE, 1, 11),
+(2, 'Фея Драже', TRUE, 1, 12),
+(3, 'Дроссельмейер', FALSE, 1, 14),
+(4, 'Танцор-солист (Арабия)', FALSE, 1, 8),
+(5, 'Танцор-солист (Китай)', FALSE, 1, 13);
+
+-- Вишнёвый сад (spectakl_id = 2)
+INSERT INTO roles (role_id, role, glavnaya_role, spectakl_id, actor_id) VALUES
+(6, 'Раневская', TRUE, 2, 4),
+(7, 'Лопахин', FALSE, 2, 1),
+(8, 'Варя', FALSE, 2, 2),
+(9, 'Трофимов', FALSE, 2, 5),
+(10, 'Гаев', FALSE, 2, 9),
+(11, 'Фирс', FALSE, 2, 15);
+
+-- Гамлет (spectakl_id = 3)
+INSERT INTO roles (role_id, role, glavnaya_role, spectakl_id, actor_id) VALUES
+(12, 'Гамлет', TRUE, 3, 3),
+(13, 'Клавдий', FALSE, 3, 6),
+(14, 'Полоний', FALSE, 3, 9),
+(15, 'Офелия', FALSE, 3, 8),
+(16, 'Горацио', FALSE, 3, 13),
+(17, 'Король-призрак', FALSE, 3, 14);
+
+-- Маскарад (spectakl_id = 4)
+INSERT INTO roles (role_id, role, glavnaya_role, spectakl_id, actor_id) VALUES
+(18, 'Арбенин', TRUE, 4, 5),
+(19, 'Нина', TRUE, 4, 2),
+(20, 'Барон', FALSE, 4, 10),
+(21, 'Князь', FALSE, 4, 1),
+(22, 'Фатальная дама', FALSE, 4, 12);
+
+-- Дядя Ваня (spectakl_id = 5)
+INSERT INTO roles (role_id, role, glavnaya_role, spectakl_id, actor_id) VALUES
+(23, 'Астров', TRUE, 5, 1),
+(24, 'Соня', FALSE, 5, 2),
+(25, 'Елена Андреевна', FALSE, 5, 4),
+(26, 'Войницкий (Дядя Ваня)', TRUE, 5, 5),
+(27, 'Сере́бряков', FALSE, 5, 7),
+(28, 'Марина', FALSE, 5, 14);
