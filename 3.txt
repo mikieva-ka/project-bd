@@ -222,8 +222,8 @@ SELECT
     u.user_id,
     u.u_fullname,
     u.email,
-    COALESCE(
-        jsonb_agg(
+    COALESCE( --возвращает первое не-NULL значение
+        jsonb_agg( --собирает все такие объекты в массив JSON.
             jsonb_build_object(
                 'bilet_id', b.bilet_id,
                 'price', b.price,
@@ -235,7 +235,7 @@ SELECT
                 'seans_time', se.time
             )
         ) FILTER (WHERE b.bilet_id IS NOT NULL),
-        '[]'::jsonb
+        '[]'::jsonb --одинарные кавычки '...' обоззначают строковую константу; ::  означает приведение значения к другому типу данных.
     ) AS bilets
 FROM users u
 LEFT JOIN bilets b ON u.user_id = b.user_id
